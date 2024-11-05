@@ -18,7 +18,10 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '17'  # Specify the Java version you are using
+        distribution: 'temurin'
+        cache: maven
 
+    
     # Step 2: Build the JAR file using Maven
     - name: Build the JAR using Maven
       run: mvn -B package --file pom.xml
