@@ -11,4 +11,4 @@ COPY target/gs-maven-*.jar /app/gs-maven-0.1.0.jar
 EXPOSE 8080
 
 # Command to run the JAR file inside the container
-CMD ["java", "-jar", "gs-maven-*.jar"]
+CMD ["java", "-jar", "gs-maven-0.1.0.jar"]
