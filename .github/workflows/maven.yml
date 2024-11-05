@@ -50,3 +50,22 @@ jobs:
     - name: Push Docker image to Docker Hub
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/maven-java-app:latest
+
+    - name: Set up SSH using the PEM key stored in GitHub Secrets
+      run: |
+         mkdir -p ~/.ssh
+         echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+         chmod 600 ~/.ssh/id_rsa
+         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+    - name: SSH to EC2 and deploy container
+      env:
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+        EC2_USER: ${{ secrets.EC2_USER }}
+        IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/maven-java-app
+        IMAGE_TAG: latest
+      run: |
+        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+        docker pull $IMAGE_NAME:$IMAGE_TAG
+        docker run -d --name your-container-name -p 8080:8080 $IMAGE_NAME:$IMAGE_TAG
+        EOF     
